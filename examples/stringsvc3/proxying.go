@@ -22,27 +22,27 @@ import (
 )
 
 func proxyingMiddleware(ctx context.Context, instances string, logger log.Logger) ServiceMiddleware {
-	// If instances is empty, don't proxy.
+	// 如果instances为空，请不要代理。
 	if instances == "" {
 		logger.Log("proxy_to", "none")
 		return func(next StringService) StringService { return next }
 	}
 
-	// Set some parameters for our client.
+	//为我们的客户设置一些参数。
 	var (
 		qps         = 100                    // beyond which we will return an error
 		maxAttempts = 3                      // per request, before giving up
 		maxTime     = 250 * time.Millisecond // wallclock time, before giving up
 	)
 
-	// Otherwise, construct an endpoint for each instance in the list, and add
-	// it to a fixed set of endpoints. In a real service, rather than doing this
-	// by hand, you'd probably use package sd's support for your service
-	// discovery system.
+	//否则，为列表中每个实例构建一个端点，然后添加它到固定的端点集。 在真正的服务中，而不是这样做。
+	//您可能会使用软件包SD的支持来服务 发现系统。
+
 	var (
 		instanceList = split(instances)
 		endpointer   sd.FixedEndpointer
 	)
+
 	logger.Log("proxy_to", fmt.Sprint(instanceList))
 	for _, instance := range instanceList {
 		var e endpoint.Endpoint
@@ -52,20 +52,20 @@ func proxyingMiddleware(ctx context.Context, instances string, logger log.Logger
 		endpointer = append(endpointer, e)
 	}
 
-	// Now, build a single, retrying, load-balancing endpoint out of all of
-	// those individual endpoints.
+	// Now, build a single, retrying, load-balancing endpoint out of all of those individual endpoints.
+	// 现在，在所有这些单个端点中构建一个单个重试的负载平衡端点。
+
 	balancer := lb.NewRoundRobin(endpointer)
 	retry := lb.Retry(maxAttempts, maxTime, balancer)
 
-	// And finally, return the ServiceMiddleware, implemented by proxymw.
+	// 最后，返回由Proxymw实施的ServiceMiddleware。
+
 	return func(next StringService) StringService {
 		return proxymw{ctx, next, retry}
 	}
 }
 
-// proxymw implements StringService, forwarding Uppercase requests to the
-// provided endpoint, and serving all other (i.e. Count) requests via the
-// next StringService.
+// proxymw 实现StringService，将大写请求转发到提供的endpoint，并通过所有其他（即计数）请求通过下一个Stringservice。
 type proxymw struct {
 	ctx       context.Context
 	next      StringService     // Serve most requests via this service...
@@ -100,6 +100,7 @@ func makeUppercaseProxy(ctx context.Context, instance string) endpoint.Endpoint 
 	if u.Path == "" {
 		u.Path = "/uppercase"
 	}
+	// 传输客户端
 	return httptransport.NewClient(
 		"GET",
 		u,
@@ -108,6 +109,7 @@ func makeUppercaseProxy(ctx context.Context, instance string) endpoint.Endpoint 
 	).Endpoint()
 }
 
+// 按逗号拆分，去除两边空格
 func split(s string) []string {
 	a := strings.Split(s, ",")
 	for i := range a {

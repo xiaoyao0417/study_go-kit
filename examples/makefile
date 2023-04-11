@@ -1,0 +1,5 @@
+
+
+fmt:
+	@go fmt *.go
+

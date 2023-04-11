@@ -6,6 +6,7 @@ import (
 	"github.com/go-kit/kit/log"
 )
 
+// 应用程序日志记录 中间件
 type loggingMiddleware struct {
 	logger log.Logger
 	next   StringService

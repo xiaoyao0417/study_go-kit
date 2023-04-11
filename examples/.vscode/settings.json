@@ -1,0 +1,18 @@
+{
+    "cSpell.words": [
+        "circuitbreaker",
+        "endpointer",
+        "Gobreaker",
+        "httptransport",
+        "instrmw",
+        "kitprometheus",
+        "logmw",
+        "natstransport",
+        "proxying",
+        "proxymw",
+        "ratelimit",
+        "stdprometheus",
+        "Stringservice",
+        "wallclock"
+    ]
+}

@@ -7,6 +7,7 @@ import (
 	"github.com/go-kit/kit/metrics"
 )
 
+// 应用检测中间件
 type instrumentingMiddleware struct {
 	requestCount   metrics.Counter
 	requestLatency metrics.Histogram

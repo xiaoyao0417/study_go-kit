@@ -16,13 +16,15 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-// StringService provides operations on strings.
+// Stringservice提供有关字符串的操作。
 type StringService interface {
+	// 转化为大写
 	Uppercase(context.Context, string) (string, error)
+	// 计数
 	Count(context.Context, string) int
 }
 
-// stringService is a concrete implementation of StringService
+// stringService是Stringservice的具体实现
 type stringService struct{}
 
 func (stringService) Uppercase(_ context.Context, s string) (string, error) {
@@ -36,10 +38,10 @@ func (stringService) Count(_ context.Context, s string) int {
 	return len(s)
 }
 
-// ErrEmpty is returned when an input string is empty.
+// 当输入字符串为空时，返回Errempty。
 var ErrEmpty = errors.New("empty string")
 
-// For each method, we define request and response structs
+// 对于每种方法，我们定义请求和响应结构
 type uppercaseRequest struct {
 	S string `json:"s"`
 }
@@ -57,7 +59,7 @@ type countResponse struct {
 	V int `json:"v"`
 }
 
-// Endpoints are a primary abstraction in go-kit. An endpoint represents a single RPC (method in our service interface)
+// Endpoints是Go-kit中的主要抽象。 Endpoints代表单个RPC（我们服务接口中的方法）
 func makeUppercaseHTTPEndpoint(nc *nats.Conn) endpoint.Endpoint {
 	return natstransport.NewPublisher(
 		nc,
@@ -95,7 +97,7 @@ func makeCountEndpoint(svc StringService) endpoint.Endpoint {
 	}
 }
 
-// Transports expose the service to the network. In this fourth example we utilize JSON over NATS and HTTP.
+// Transports将服务暴露到网络。 在第四个示例中，我们利用JSON在NAT和HTTP上使用。
 func main() {
 	svc := stringService{}
 

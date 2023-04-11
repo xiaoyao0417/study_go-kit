@@ -37,7 +37,13 @@ func main() {
 
 	var svc StringService
 	svc = stringService{}
+
+	// 注意：赋值一个StringService , 返回一个StringService， 这样会形成StringService的链
+	// 是不是要考虑中间件的先后问题？
+
+	// 日志中间件
 	svc = loggingMiddleware{logger, svc}
+	//
 	svc = instrumentingMiddleware{requestCount, requestLatency, countResult, svc}
 
 	uppercaseHandler := httptransport.NewServer(
@@ -55,6 +61,7 @@ func main() {
 	http.Handle("/uppercase", uppercaseHandler)
 	http.Handle("/count", countHandler)
 	http.Handle("/metrics", promhttp.Handler())
+
 	logger.Log("msg", "HTTP", "addr", ":8080")
 	logger.Log("err", http.ListenAndServe(":8080", nil))
 }
