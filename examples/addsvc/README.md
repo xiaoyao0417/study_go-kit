@@ -15,3 +15,12 @@ If you don't _know_ you need to use one in your organization, it's probably best
 avoided: prefer moving that logic to consumers, and relying on 
  [contract testing](https://docs.pact.io/best_practices/contract_tests_not_functional_tests.html)
 to detect incompatibilities.
+
+
+# 基本使用
+
+1. protobuf-go地址：  https://github.com/protocolbuffers/protobuf-go
+2. 实现Service
+3. 定义请求和响应
+4. Endpoint是函数，将请求和响应关联起来，函数内部处理Service
+5. transport负责传输 这里使用json 所以会有 decode 和 encode
